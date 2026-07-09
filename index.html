@@ -172,7 +172,7 @@
   }
   .row:focus-visible { outline: 2px solid var(--gold-deep); outline-offset: -2px; }
 
-  /* source list (non-pages repos) — quieter, two columns */
+  /* source list (non-pages repos) – quieter, two columns */
   .source-grid {
     list-style: none;
     display: grid; grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr));
@@ -280,7 +280,7 @@
   'use strict';
   const USER = 'ghzgod';
   const SITE_REPO = USER + '.github.io';
-  const TTL = 30 * 60 * 1000; // 30 min cache — stays far below the 60 req/h anon limit
+  const TTL = 30 * 60 * 1000; // 30 min cache – stays far below the 60 req/h anon limit
   const KEY = 'ghz-repos-v1';
 
   /* ---------- data ---------- */
@@ -314,7 +314,7 @@
     return Math.floor(days / 365) + 'y ago';
   };
 
-  /* ---------- render (createElement only — API text never hits innerHTML) ---------- */
+  /* ---------- render (createElement only – API text never hits innerHTML) ---------- */
   const el = (tag, cls, text) => {
     const n = document.createElement(tag);
     if (cls) n.className = cls;
