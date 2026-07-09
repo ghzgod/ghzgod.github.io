@@ -3,288 +3,450 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>⚡</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E" />
-<meta name="description" content="⚡" />
+<title>Projects — a working index</title>
+<meta name="description" content="A working index of software projects — live sites, tools, and experiments." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='6' fill='%23d8b365'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,550;1,9..144,340&family=Instrument+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
 <style>
-  :root { --volt: #38f6ff; --arc: #7cf9ff; --violet: #b061ff; --hot: #eaffff; }
+  :root {
+    --ink:        oklch(0.185 0.018 275);   /* deep indigo-charcoal, never pure black */
+    --ink-raise:  oklch(0.225 0.02 275);
+    --paper:      oklch(0.93 0.012 85);     /* warm off-white */
+    --paper-dim:  oklch(0.72 0.014 85);
+    --paper-faint:oklch(0.52 0.014 275);
+    --gold:       oklch(0.8 0.095 85);      /* champagne */
+    --gold-deep:  oklch(0.68 0.11 78);
+    --hairline:   oklch(0.34 0.02 275);
+    --serif: "Fraunces", Georgia, serif;
+    --sans: "Instrument Sans", "Helvetica Neue", sans-serif;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { height: 100%; overflow: hidden; background: #01030a; }
-  body { position: fixed; inset: 0; touch-action: manipulation; }
-  #sky { position: absolute; inset: 0; display: block; }
-  /* faint tooltip that appears on hover only – wordless by default */
-  #tip {
-    position: fixed; z-index: 5; pointer-events: none;
-    padding: .3rem .7rem; transform: translate(-50%, -160%);
-    font: 600 12px/1 ui-monospace, "SF Mono", Menlo, monospace;
-    letter-spacing: .28em; text-transform: uppercase;
-    color: var(--hot); background: rgba(3,10,24,.6);
-    border: 1px solid rgba(56,246,255,.5);
-    border-radius: 2px; opacity: 0; transition: opacity .18s;
-    text-shadow: 0 0 10px var(--volt); white-space: nowrap;
-    backdrop-filter: blur(3px);
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--sans);
+    font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
-  #tip.on { opacity: .92; }
-  /* boot / offline spark */
-  #boot {
-    position: fixed; inset: 0; display: grid; place-items: center; z-index: 8;
-    color: var(--volt); font: 300 clamp(3rem, 20vw, 9rem)/1 system-ui;
-    text-shadow: 0 0 40px var(--volt), 0 0 80px var(--violet);
-    transition: opacity .6s; pointer-events: none;
-    animation: flicker 2.4s infinite;
+  ::selection { background: var(--gold); color: var(--ink); }
+
+  /* ---- ambient canvas: drifting motes ---- */
+  #dust {
+    position: fixed; inset: 0; z-index: 0;
+    pointer-events: none;
   }
-  #boot.gone { opacity: 0; }
-  @keyframes flicker {
-    0%,19%,21%,50%,52%,100% { opacity: 1; }
-    20%,51% { opacity: .35; }
+
+  .page {
+    position: relative; z-index: 1;
+    max-width: 68rem;
+    margin: 0 auto;
+    padding: 0 clamp(1.25rem, 5vw, 4rem);
   }
-  canvas { cursor: crosshair; }
-  @media (prefers-reduced-motion: reduce) { #boot { animation: none; } }
+
+  /* ---- top bar ---- */
+  header.top {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding-top: clamp(1.5rem, 4vh, 3rem);
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--paper-dim);
+  }
+  header.top a {
+    color: var(--paper-dim); text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.25s, border-color 0.25s;
+  }
+  header.top a:hover, header.top a:focus-visible { color: var(--gold); border-color: var(--gold-deep); }
+
+  /* ---- hero ---- */
+  .hero {
+    padding: clamp(5rem, 16vh, 11rem) 0 clamp(4rem, 10vh, 7rem);
+    max-width: 46rem;
+  }
+  .hero .eyebrow {
+    font-size: 0.8rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.75rem;
+    display: flex; align-items: center; gap: 0.9rem;
+  }
+  .hero .eyebrow::before {
+    content: ""; width: 2.6rem; height: 1px; background: var(--gold-deep);
+    display: inline-block;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(2.4rem, 2rem + 4.5vw, 4.9rem);
+    line-height: 1.06;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  h1 em {
+    font-style: italic; font-weight: 340;
+    color: var(--gold);
+  }
+  /* staggered reveal on load */
+  .rise { opacity: 0; transform: translateY(18px); animation: rise 0.9s var(--ease-out) forwards; }
+  .rise.d1 { animation-delay: 0.08s; } .rise.d2 { animation-delay: 0.2s; } .rise.d3 { animation-delay: 0.34s; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+
+  /* ---- section headings ---- */
+  .section { padding: clamp(2.5rem, 7vh, 5rem) 0; }
+  .section-head {
+    display: flex; align-items: baseline; gap: 1.25rem;
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 1rem; margin-bottom: 0.5rem;
+  }
+  .section-head h2 {
+    font-family: var(--serif); font-weight: 400; font-style: italic;
+    font-size: clamp(1.35rem, 1.2rem + 0.8vw, 1.9rem);
+    letter-spacing: 0.01em;
+  }
+  .section-head .count {
+    font-size: 0.78rem; letter-spacing: 0.18em; color: var(--paper-faint);
+    text-transform: uppercase;
+  }
+  .section-head .hint {
+    margin-left: auto; font-size: 0.78rem; letter-spacing: 0.1em;
+    color: var(--paper-faint); text-transform: uppercase;
+  }
+
+  /* ---- project index rows ---- */
+  .index { list-style: none; }
+  .index li { border-bottom: 1px solid var(--hairline); }
+  .index li:last-child { border-bottom: none; }
+  .row {
+    display: grid;
+    grid-template-columns: 3.2rem 1fr auto;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    align-items: baseline;
+    padding: clamp(1.4rem, 3.5vh, 2.1rem) 0.25rem;
+    text-decoration: none; color: inherit;
+    position: relative;
+    transition: background 0.35s var(--ease-out);
+  }
+  .row .num {
+    font-family: var(--serif); font-style: italic; font-weight: 340;
+    color: var(--paper-faint); font-size: 0.95rem;
+    transition: color 0.3s;
+  }
+  .row .name {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(1.5rem, 1.25rem + 1.6vw, 2.4rem);
+    line-height: 1.15; letter-spacing: -0.01em;
+    transition: color 0.3s;
+  }
+  .row .desc {
+    display: block; font-family: var(--sans);
+    font-size: 0.95rem; color: var(--paper-dim);
+    margin-top: 0.45rem; max-width: 38rem;
+  }
+  .row .meta {
+    text-align: right; font-size: 0.75rem; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--paper-faint);
+    white-space: nowrap;
+    display: grid; gap: 0.35rem; justify-items: end;
+    transition: opacity 0.2s;
+  }
+  .row .meta .lang { color: var(--paper-dim); }
+  .row .go {
+    position: absolute; right: 0.25rem; top: 50%;
+    transform: translate(-14px, -50%);
+    opacity: 0; font-size: 1.5rem; color: var(--gold);
+    transition: opacity 0.3s, transform 0.45s var(--ease-out);
+    pointer-events: none;
+  }
+  @media (hover: hover) {
+    .row:hover, .row:focus-visible { background: var(--ink-raise); }
+    .row:hover .name, .row:focus-visible .name { color: var(--gold); }
+    .row:hover .num { color: var(--gold-deep); }
+    .row:hover .meta { opacity: 0; }
+    .row:hover .go, .row:focus-visible .go { opacity: 1; transform: translate(0, -50%); }
+  }
+  .row:focus-visible { outline: 2px solid var(--gold-deep); outline-offset: -2px; }
+
+  /* source list (non-pages repos) — quieter, two columns */
+  .source-grid {
+    list-style: none;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr));
+    column-gap: clamp(2rem, 5vw, 4rem);
+  }
+  .source-grid li { border-bottom: 1px solid var(--hairline); }
+  .srow {
+    display: block; padding: 1.15rem 0.25rem; text-decoration: none; color: inherit;
+  }
+  .srow .name {
+    font-family: var(--serif); font-size: 1.2rem; font-weight: 400;
+    transition: color 0.25s;
+  }
+  .srow .desc { display: block; font-size: 0.88rem; color: var(--paper-dim); margin-top: 0.3rem; }
+  .srow .lang { display: block; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--paper-faint); margin-top: 0.55rem; }
+  .srow:hover .name, .srow:focus-visible .name { color: var(--gold); }
+
+  /* scroll reveal */
+  .veil { opacity: 0; transform: translateY(22px); transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); }
+  .veil.seen { opacity: 1; transform: none; }
+
+  /* loading shimmer rows */
+  .ghost { border-bottom: 1px solid var(--hairline); padding: 1.9rem 0.25rem; }
+  .ghost .bar {
+    height: 1.7rem; width: 42%; border-radius: 2px;
+    background: linear-gradient(100deg, var(--ink-raise) 40%, oklch(0.27 0.02 275) 50%, var(--ink-raise) 60%);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s linear infinite;
+  }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+
+  .apology { padding: 2.5rem 0.25rem; color: var(--paper-dim); font-size: 0.95rem; }
+  .apology a { color: var(--gold); }
+
+  /* ---- footer ---- */
+  footer {
+    margin-top: clamp(4rem, 10vh, 8rem);
+    padding: 2.5rem 0 3rem;
+    border-top: 1px solid var(--hairline);
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 1rem; flex-wrap: wrap;
+    font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--paper-faint);
+  }
+  footer a { color: var(--paper-dim); text-decoration: none; border-bottom: 1px solid transparent; transition: color .25s, border-color .25s; }
+  footer a:hover { color: var(--gold); border-color: var(--gold-deep); }
+
+  @media (max-width: 40rem) {
+    .row { grid-template-columns: 2.1rem 1fr; }
+    .row .meta { display: none; }
+    .row .go { display: none; }
+    .section-head .hint { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rise, .veil { animation: none; transition: none; opacity: 1; transform: none; }
+    #dust { display: none; }
+    html { scroll-behavior: auto; }
+  }
 </style>
 </head>
 <body>
-  <canvas id="sky"></canvas>
-  <div id="boot">⚡</div>
-  <div id="tip" aria-hidden="true"></div>
+<canvas id="dust" aria-hidden="true"></canvas>
+
+<div class="page">
+  <header class="top rise">
+    <span>Portfolio</span>
+    <a href="https://github.com/ghzgod" rel="me">github.com/ghzgod</a>
+  </header>
+
+  <section class="hero">
+    <p class="eyebrow rise d1">A working index</p>
+    <h1 class="rise d2">Software, shipped —<br />tools, experiments &amp; <em>small machines</em> for the web.</h1>
+  </section>
+
+  <section class="section" id="live" aria-labelledby="live-h">
+    <div class="section-head veil">
+      <h2 id="live-h">Live projects</h2>
+      <span class="count" id="live-count"></span>
+      <span class="hint">Select to visit</span>
+    </div>
+    <ul class="index" id="live-list">
+      <li class="ghost"><div class="bar"></div></li>
+      <li class="ghost"><div class="bar" style="width:31%"></div></li>
+      <li class="ghost"><div class="bar" style="width:37%"></div></li>
+    </ul>
+  </section>
+
+  <section class="section" id="source" aria-labelledby="source-h" hidden>
+    <div class="section-head veil">
+      <h2 id="source-h">In the workshop</h2>
+      <span class="count" id="source-count"></span>
+      <span class="hint">Source on GitHub</span>
+    </div>
+    <ul class="source-grid" id="source-list"></ul>
+  </section>
+
+  <footer>
+    <span>Made by hand, kept in motion.</span>
+    <a href="https://github.com/ghzgod">@ghzgod</a>
+  </footer>
+</div>
 
 <script>
 (() => {
   'use strict';
   const USER = 'ghzgod';
-  const canvas = document.getElementById('sky');
-  const ctx = canvas.getContext('2d');
-  const tip = document.getElementById('tip');
-  const boot = document.getElementById('boot');
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SITE_REPO = USER + '.github.io';
+  const TTL = 30 * 60 * 1000; // 30 min cache — stays far below the 60 req/h anon limit
+  const KEY = 'ghz-repos-v1';
 
-  let W = 0, H = 0, DPR = 1;
-  function resize() {
-    DPR = Math.min(2, devicePixelRatio || 1);
-    W = innerWidth; H = innerHeight;
-    canvas.width = W * DPR; canvas.height = H * DPR;
-    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    layout();
-  }
-  addEventListener('resize', resize);
-
-  // ---- state ----
-  const nodes = [];      // project orbs
-  let core = { x: 0, y: 0, r: 0, phase: 0 };
-  let hovered = null;
-  const pointer = { x: -1e3, y: -1e3, down: false };
-  const sparks = [];     // drifting electrons
-
-  // deterministic jitter per index (no Math.random dependence for positions)
-  const hash = (n) => { const s = Math.sin(n * 12.9898) * 43758.5453; return s - Math.floor(s); };
-
-  function layout() {
-    core.x = W / 2; core.y = H / 2;
-    core.r = Math.max(26, Math.min(W, H) * 0.06);
-    const n = nodes.length || 1;
-    const ring = Math.min(W, H) * (n > 8 ? 0.40 : 0.33);
-    nodes.forEach((nd, i) => {
-      const a = (i / n) * Math.PI * 2 - Math.PI / 2;
-      nd.baseA = a;
-      nd.orbit = ring * (0.7 + 0.3 * hash(i + 1));
-      nd.r = Math.max(13, core.r * (0.42 + 0.16 * hash(i * 3 + 2)));
-      nd.spin = (hash(i + 5) - 0.5) * 0.00028;   // slow drift
-      nd.pulse = hash(i + 9) * Math.PI * 2;
-    });
+  /* ---------- data ---------- */
+  async function getRepos() {
+    let cached = null;
+    try { cached = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+    if (cached && Date.now() - cached.at < TTL) return cached.repos;
+    try {
+      const res = await fetch('https://api.github.com/users/' + USER + '/repos?per_page=100&sort=pushed');
+      if (!res.ok) throw new Error(res.status);
+      const repos = await res.json();
+      try { localStorage.setItem(KEY, JSON.stringify({ at: Date.now(), repos })); } catch (e) {}
+      return repos;
+    } catch (err) {
+      if (cached) return cached.repos; // stale beats nothing
+      throw err;
+    }
   }
 
-  // ---- lightning: midpoint-displacement jagged path ----
-  function bolt(x1, y1, x2, y2, disp, t) {
-    const pts = [[x1, y1], [x2, y2]];
-    let d = disp, passes = 5;
-    while (passes--) {
-      const np = [];
-      for (let i = 0; i < pts.length - 1; i++) {
-        const [ax, ay] = pts[i], [bx, by] = pts[i + 1];
-        const mx = (ax + bx) / 2, my = (ay + by) / 2;
-        const nx = -(by - ay), ny = (bx - ax);
-        const len = Math.hypot(nx, ny) || 1;
-        // wobble with time so the arc crackles
-        const off = (Math.sin((i + 1) * 91.7 + t) ) * d;
-        np.push([ax, ay], [mx + (nx / len) * off, my + (ny / len) * off]);
+  const titleCase = (name) => name
+    .replace(/[-_]+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+
+  const since = (iso) => {
+    const days = Math.floor((Date.now() - new Date(iso)) / 86400000);
+    if (days < 1) return 'today';
+    if (days < 30) return days + 'd ago';
+    if (days < 365) return Math.floor(days / 30) + 'mo ago';
+    return Math.floor(days / 365) + 'y ago';
+  };
+
+  /* ---------- render (createElement only — API text never hits innerHTML) ---------- */
+  const el = (tag, cls, text) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  };
+
+  function liveRow(repo, i) {
+    const li = el('li', 'veil');
+    const a = el('a', 'row');
+    a.href = 'https://' + USER + '.github.io/' + repo.name + '/';
+    const num = el('span', 'num', String(i + 1).padStart(2, '0'));
+    const body = el('span');
+    body.appendChild(el('span', 'name', titleCase(repo.name)));
+    if (repo.description) body.appendChild(el('span', 'desc', repo.description));
+    const meta = el('span', 'meta');
+    if (repo.language) meta.appendChild(el('span', 'lang', repo.language));
+    meta.appendChild(el('span', null, since(repo.pushed_at)));
+    const go = el('span', 'go', '→');
+    go.setAttribute('aria-hidden', 'true');
+    a.append(num, body, meta, go);
+    li.appendChild(a);
+    return li;
+  }
+
+  function sourceRow(repo) {
+    const li = el('li', 'veil');
+    const a = el('a', 'srow');
+    a.href = repo.html_url;
+    a.appendChild(el('span', 'name', titleCase(repo.name)));
+    if (repo.description) a.appendChild(el('span', 'desc', repo.description));
+    a.appendChild(el('span', 'lang', (repo.language || 'Misc') + ' · ' + since(repo.pushed_at)));
+    li.appendChild(a);
+    return li;
+  }
+
+  const observer = ('IntersectionObserver' in window)
+    ? new IntersectionObserver((entries) => {
+        for (const e of entries) if (e.isIntersecting) { e.target.classList.add('seen'); observer.unobserve(e.target); }
+      }, { threshold: 0.1 })
+    : null;
+  const watch = (node) => observer ? observer.observe(node) : node.classList.add('seen');
+  document.querySelectorAll('.veil').forEach(watch);
+
+  async function build() {
+    const liveList = document.getElementById('live-list');
+    try {
+      const repos = (await getRepos()).filter((r) => !r.fork && !r.archived);
+      const live = repos.filter((r) => r.has_pages && r.name !== SITE_REPO)
+                        .sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at));
+      const source = repos.filter((r) => !r.has_pages)
+                          .sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at));
+
+      liveList.textContent = '';
+      if (live.length) {
+        live.forEach((r, i) => { const row = liveRow(r, i); liveList.appendChild(row); watch(row); });
+        document.getElementById('live-count').textContent = 'No. 01 — ' + String(live.length).padStart(2, '0');
+      } else {
+        liveList.appendChild(el('li', 'apology', 'Nothing deployed right now — the workshop below is where things are happening.'));
       }
-      np.push(pts[pts.length - 1]);
-      pts.length = 0; pts.push(...np);
-      d *= 0.5;
-    }
-    ctx.beginPath();
-    ctx.moveTo(pts[0][0], pts[0][1]);
-    for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
-    ctx.stroke();
-  }
 
-  function drawArc(x1, y1, x2, y2, intensity, t) {
-    const dist = Math.hypot(x2 - x1, y2 - y1);
-    const disp = Math.min(60, dist * 0.14) * (0.6 + 0.4 * intensity);
-    // outer glow
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.strokeStyle = 'rgba(56,246,255,' + (0.10 + 0.22 * intensity) + ')';
-    ctx.lineWidth = 6 * intensity + 2; ctx.shadowColor = '#38f6ff'; ctx.shadowBlur = 24 * intensity + 6;
-    bolt(x1, y1, x2, y2, disp, t);
-    // hot core of the bolt
-    ctx.shadowBlur = 10;
-    ctx.strokeStyle = 'rgba(234,255,255,' + (0.5 + 0.5 * intensity) + ')';
-    ctx.lineWidth = 1.4 + intensity;
-    bolt(x1, y1, x2, y2, disp * 0.7, t * 1.3 + 3);
-    ctx.restore();
-  }
-
-  function drawCore(t) {
-    const pulse = 1 + Math.sin(t * 2) * 0.06;
-    const r = core.r * pulse;
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    // halo
-    const g = ctx.createRadialGradient(core.x, core.y, 0, core.x, core.y, r * 4);
-    g.addColorStop(0, 'rgba(176,97,255,0.5)');
-    g.addColorStop(0.3, 'rgba(56,246,255,0.28)');
-    g.addColorStop(1, 'rgba(1,3,10,0)');
-    ctx.fillStyle = g;
-    ctx.beginPath(); ctx.arc(core.x, core.y, r * 4, 0, 7); ctx.fill();
-    // crackling corona
-    const bolts = reduce ? 0 : 7;
-    for (let i = 0; i < bolts; i++) {
-      const a = t * 0.6 + i * (6.28 / bolts);
-      const rr = r * (1.25 + hash(i + Math.floor(t * 3)) * 0.8);
-      drawArc(core.x, core.y, core.x + Math.cos(a) * rr, core.y + Math.sin(a) * rr, 0.5, t * 5 + i);
-    }
-    // white-hot center
-    ctx.shadowColor = '#eaffff'; ctx.shadowBlur = 40;
-    const cg = ctx.createRadialGradient(core.x, core.y, 0, core.x, core.y, r);
-    cg.addColorStop(0, '#ffffff');
-    cg.addColorStop(0.5, '#7cf9ff');
-    cg.addColorStop(1, 'rgba(56,246,255,0)');
-    ctx.fillStyle = cg;
-    ctx.beginPath(); ctx.arc(core.x, core.y, r, 0, 7); ctx.fill();
-    ctx.restore();
-  }
-
-  function nodePos(nd, t) {
-    const a = nd.baseA + t * (reduce ? 0 : 1) * nd.spin * 1000;
-    return { x: core.x + Math.cos(a) * nd.orbit, y: core.y + Math.sin(a) * nd.orbit, a };
-  }
-
-  function drawNode(nd, t) {
-    const p = nodePos(nd, t); nd.x = p.x; nd.y = p.y;
-    const hot = nd === hovered;
-    const pulse = 1 + Math.sin(t * 3 + nd.pulse) * 0.12 + (hot ? 0.35 : 0);
-    const r = nd.r * pulse;
-    // arc from core to node
-    const flick = 0.55 + 0.45 * Math.abs(Math.sin(t * 7 + nd.pulse));
-    drawArc(core.x, core.y, nd.x, nd.y, (hot ? 1 : 0.5) * flick, t * 6 + nd.pulse * 10);
-    // orb
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.shadowColor = hot ? '#b061ff' : '#38f6ff';
-    ctx.shadowBlur = hot ? 45 : 22;
-    const og = ctx.createRadialGradient(nd.x, nd.y, 0, nd.x, nd.y, r);
-    og.addColorStop(0, '#ffffff');
-    og.addColorStop(0.45, hot ? '#d7b4ff' : '#7cf9ff');
-    og.addColorStop(1, 'rgba(56,246,255,0)');
-    ctx.fillStyle = og;
-    ctx.beginPath(); ctx.arc(nd.x, nd.y, r, 0, 7); ctx.fill();
-    // ring
-    ctx.shadowBlur = hot ? 30 : 12;
-    ctx.strokeStyle = hot ? 'rgba(216,180,255,0.9)' : 'rgba(124,249,255,0.6)';
-    ctx.lineWidth = hot ? 2 : 1.2;
-    ctx.beginPath(); ctx.arc(nd.x, nd.y, r * 1.5, 0, 7); ctx.stroke();
-    ctx.restore();
-  }
-
-  function drawSparks(t) {
-    if (reduce) return;
-    for (const s of sparks) {
-      s.x += s.vx; s.y += s.vy; s.life -= 1;
-      if (s.life <= 0 || s.x < 0 || s.x > W || s.y < 0 || s.y > H) {
-        s.x = hash(s.id + Math.floor(t)) * W;
-        s.y = hash(s.id * 2 + Math.floor(t)) * H;
-        const a = hash(s.id * 3) * 6.28; const sp = 0.2 + hash(s.id) * 0.5;
-        s.vx = Math.cos(a) * sp; s.vy = Math.sin(a) * sp; s.life = 120 + hash(s.id) * 200;
+      if (source.length) {
+        const sec = document.getElementById('source');
+        sec.hidden = false;
+        const list = document.getElementById('source-list');
+        source.forEach((r) => { const row = sourceRow(r); list.appendChild(row); watch(row); });
+        document.getElementById('source-count').textContent = String(source.length) + ' repositories';
       }
-      ctx.save(); ctx.globalCompositeOperation = 'lighter';
-      ctx.fillStyle = 'rgba(124,249,255,' + (0.15 + 0.3 * (s.life / 300)) + ')';
-      ctx.shadowColor = '#38f6ff'; ctx.shadowBlur = 6;
-      ctx.fillRect(s.x, s.y, 1.6, 1.6); ctx.restore();
+    } catch (err) {
+      liveList.textContent = '';
+      const li = el('li', 'apology');
+      li.append('The live index could not be reached — everything is still at ');
+      const a = el('a', null, 'github.com/' + USER);
+      a.href = 'https://github.com/' + USER;
+      li.append(a, '.');
+      liveList.appendChild(li);
     }
   }
+  build();
 
-  let last = 0;
-  function frame(ms) {
-    const t = ms / 1000;
-    // trailing fade for motion blur
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.fillStyle = 'rgba(1,3,10,' + (reduce ? 1 : 0.28) + ')';
-    ctx.fillRect(0, 0, W, H);
-    drawSparks(t);
-    drawCore(t);
-    hovered = null;
-    for (const nd of nodes) {
-      const p = nodePos(nd, t);
-      if (Math.hypot(pointer.x - p.x, pointer.y - p.y) < nd.r * 1.8) hovered = nd;
+  /* ---------- ambient dust motes ---------- */
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const canvas = document.getElementById('dust');
+    const ctx = canvas.getContext('2d');
+    let W, H, DPR;
+    const motes = [];
+    const COUNT = 42;
+
+    function resize() {
+      DPR = Math.min(2, devicePixelRatio || 1);
+      W = innerWidth; H = innerHeight;
+      canvas.width = W * DPR; canvas.height = H * DPR;
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     }
-    for (const nd of nodes) drawNode(nd, t);
-    // tooltip
-    if (hovered) {
-      tip.textContent = hovered.label;
-      tip.style.left = hovered.x + 'px'; tip.style.top = hovered.y + 'px';
-      tip.classList.add('on'); canvas.style.cursor = 'pointer';
-    } else { tip.classList.remove('on'); canvas.style.cursor = 'crosshair'; }
+    resize();
+    addEventListener('resize', resize);
+
+    for (let i = 0; i < COUNT; i++) {
+      motes.push({
+        x: Math.random() * innerWidth,
+        y: Math.random() * innerHeight,
+        r: 0.5 + Math.random() * 1.4,
+        vx: (Math.random() - 0.5) * 0.08,
+        vy: -0.03 - Math.random() * 0.09,
+        tw: Math.random() * Math.PI * 2,
+        golden: Math.random() < 0.18
+      });
+    }
+
+    let last = 0, visible = !document.hidden;
+    document.addEventListener('visibilitychange', () => { visible = !document.hidden; });
+
+    function frame(t) {
+      requestAnimationFrame(frame);
+      if (!visible || t - last < 33) return; // ~30fps is plenty for dust
+      last = t;
+      ctx.clearRect(0, 0, W, H);
+      for (const m of motes) {
+        m.x += m.vx; m.y += m.vy; m.tw += 0.012;
+        if (m.y < -4) { m.y = H + 4; m.x = Math.random() * W; }
+        if (m.x < -4) m.x = W + 4;
+        if (m.x > W + 4) m.x = -4;
+        const a = 0.10 + 0.16 * (0.5 + 0.5 * Math.sin(m.tw));
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
+        ctx.fillStyle = m.golden
+          ? 'rgba(216, 179, 101,' + (a * 1.5).toFixed(3) + ')'
+          : 'rgba(214, 214, 228,' + a.toFixed(3) + ')';
+        ctx.fill();
+      }
+    }
     requestAnimationFrame(frame);
   }
-
-  // ---- interaction ----
-  function moveTo(x, y) { pointer.x = x; pointer.y = y; }
-  canvas.addEventListener('mousemove', (e) => moveTo(e.clientX, e.clientY));
-  canvas.addEventListener('mouseleave', () => moveTo(-1e3, -1e3));
-  canvas.addEventListener('click', () => { if (hovered) window.location.href = hovered.url; });
-  canvas.addEventListener('touchstart', (e) => {
-    const tch = e.touches[0]; moveTo(tch.clientX, tch.clientY);
-  }, { passive: true });
-  canvas.addEventListener('touchend', () => { if (hovered) window.location.href = hovered.url; });
-
-  // ---- data: auto-scan the user's projects ----
-  function addProjects(list) {
-    nodes.length = 0;
-    for (const p of list) nodes.push({ label: p.label, url: p.url });
-    for (let i = 0; i < 60; i++) sparks.push({ id: i, x: 0, y: 0, vx: 0, vy: 0, life: 0 });
-    layout();
-    boot.classList.add('gone');
-  }
-
-  async function scan() {
-    try {
-      const res = await fetch(`https://api.github.com/users/${USER}/repos?per_page=100&sort=pushed`, {
-        headers: { Accept: 'application/vnd.github+json' },
-      });
-      if (!res.ok) throw new Error('gh ' + res.status);
-      const repos = await res.json();
-      const live = repos
-        .filter((r) => r.has_pages && !r.fork && !r.archived)
-        .map((r) => ({
-          label: r.name,
-          // user/root pages repo serves at the apex; others at /<name>/
-          url: r.name.toLowerCase() === `${USER}.github.io`
-            ? `https://${USER}.github.io/`
-            : (r.homepage && /^https?:/.test(r.homepage) ? r.homepage : `https://${USER}.github.io/${r.name}/`),
-          pushed: r.pushed_at,
-        }));
-      if (!live.length) throw new Error('no pages yet');
-      addProjects(live);
-    } catch (err) {
-      // Offline / rate-limited: keep the lone spark pulsing, retry a few times.
-      if ((scan.tries = (scan.tries || 0) + 1) < 4) return setTimeout(scan, 4000);
-    }
-  }
-
-  resize();
-  requestAnimationFrame(frame);
-  scan();
 })();
 </script>
 </body>
