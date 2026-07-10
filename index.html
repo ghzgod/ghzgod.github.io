@@ -148,6 +148,15 @@
     font-size: 0.95rem; color: var(--paper-dim);
     margin-top: 0.45rem; max-width: 38rem;
   }
+  .row .note {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--gold-deep); margin-top: 0.6rem;
+  }
+  .row .note::before {
+    content: ""; width: 0.42rem; height: 0.42rem; border-radius: 50%;
+    background: var(--gold); box-shadow: 0 0 8px var(--gold-deep);
+  }
   .row .meta {
     text-align: right; font-size: 0.75rem; letter-spacing: 0.16em;
     text-transform: uppercase; color: var(--paper-faint);
@@ -330,6 +339,9 @@
     const body = el('span');
     body.appendChild(el('span', 'name', titleCase(repo.name)));
     if (repo.description) body.appendChild(el('span', 'desc', repo.description));
+    // Every live project is a static GitHub Pages app, so all work happens
+    // client-side. Say so, on its own row under the description.
+    body.appendChild(el('span', 'note', 'Runs entirely in your browser · no backend'));
     const meta = el('span', 'meta');
     if (repo.language) meta.appendChild(el('span', 'lang', repo.language));
     meta.appendChild(el('span', null, since(repo.pushed_at)));
